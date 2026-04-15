@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#sertifikat {
+    position: relative;
+    width: 1122px;
+    height: 794px;
+    margin: auto;
+}
+
+/* background dari Canva */
+.bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('sertifikat-bg.png') no-repeat center;
+    background-size: cover;
+}
+
+/* layer teks */
+.layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* NAMA */
+.nama {
+    position: absolute; color:#333399;
+    top: 530px;
+	left:15px;
+    width: 100%;
+	text-align: Left;
+    font-size: 36px;
+    font-weight: bold; 
+	font-style: italic;
+}
+
+/* NILAI */
+.nilai {
+    position: absolute;
+    top: 585px;
+	left:125px;
+    width: 100%;
+    text-align: left;
+    font-size: 40px;
+    color: darkblue;
+}
+
+/* TANGGAL */
+.tanggal {
+    position: absolute;
+	left:15px;
+    bottom: 75px;
+    right: 120px;
+    font-size: 35px;
+	font-weight: bold; 
+	font-style: italic;
+}
+</style>
+</head>
+
+<body>
+<div id="sertifikat">
+    <div class="bg"></div>
+
+    <div class="layer">
+        <div id="nama" class="nama">NAMA PESERTA</div>
+        <div id="nilai" class="nilai">100</div>
+        <div id="tanggal" class="tanggal">Tanggal</div>
+    </div>
+</div>
+
+<script>
+//function isiData(nama, nilai){
+//    document.getElementById("nama").innerText = nama;
+//    document.getElementById("nilai").innerText = nilai;
+//
+//    let today = new Date().toLocaleDateString("id-ID", {
+//        day: 'numeric',
+//        month: 'long',
+//        year: 'numeric'
+//    });
+//
+//    document.getElementById("tanggal").innerText = today;
+//}
+
+
+function isiData(nama, nilai){
+    let nama = document.getElementById("nama").value || "Peserta";
+    let nilai = Math.round((benar / totalSoal) * 100);
+
+    document.getElementById("nama").innerText = nama;
+    document.getElementById("nilai").innerText = nilai;
+
+    let today = new Date().toLocaleDateString("id-ID", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    document.getElementById("tanggal").innerText = today;
+
+    document.getElementById("sertifikat").style.display = "block";
+
+}
+
+// contoh
+isiData(nama, nilai);
+</script>
+
+</body>
+</html>

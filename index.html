@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Perkalian Ultimate</title>
+
+<style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #sertifikat, #sertifikat * {
+        visibility: visible;
+    }
+
+    #sertifikat {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1122px;
+        height: 794px;
+		page-break-before: always;
+    }
+}
+
+/* khusus layar kecil */
+@media (max-width: 480px) {
+    #soal {
+        font-size: 24px;
+    }
+
+    input, button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+
+body {
+	margin: 0 ;
+    font-family: Arial;
+    text-align: center;
+    background: #f0f8ff;
+}
+
+.container {
+    max-width: 420px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.soal { font-size: 28px; margin: 15px; }
+
+input, select, button {
+	width: 100%;
+    padding: 14px;
+    margin: 5px 0;
+    font-size: 18px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+
+#sertifikat {
+    width: 1122px;      /* A4 landscape (px) */
+    height: 594px;
+    padding: 40px;
+    box-sizing: border-box;
+    background: #fffbea;
+    border: 10px solid gold;
+    margin: auto;
+	page-break-inside: avoid;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>?? Game Perkalian Ultimate</h2>
+
+<input type="text" id="nama" placeholder="Nama Peserta"><br>
+
+<select id="jumlahSoal">
+    <option value="10">10 Soal</option>
+    <option value="15">15 Soal</option>
+    <option value="20">20 Soal</option>
+</select>
+
+<button onClick="toggleMusik()">?? Musik ON/OFF</button>
+
+<div class="soal" id="soal"></div>
+
+<input type="number" id="jawaban"><br>
+
+<button onClick="bunyiKlik(); cekJawaban()">Cek</button>
+
+<p id="notif"></p>
+
+<p>Soal ke: <span id="soalKe">0</span></p>
+<p>Benar: <span id="benar">0</span></p>
+
+</div>
+
+<!-- ?? Sertifikat -->
+<!-- <div id="sertifikat">
+//    <h2>?? SERTIFIKAT</h2>
+//    <p>Diberikan kepada:</p>
+//    <h3 id="namaSertifikat"></h3>
+//
+//    <p>Atas pencapaian nilai:</p>
+//    <h1 id="nilaiSertifikat"></h1>
+//
+//    <p id="tanggal"></p>
+//
+//	<button onClick="downloadPDF()">?? Download PDF</button>*/
+	
+    <!-- <button onclick="window.print()">??? Cetak / Save PDF</button> -->
+</div>
+
+<!-- ?? Backsound -->
+<audio id="bgm" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<button onClick="restartGame()">🔁 Main Lagi</button>
+
+<script>
+
+//function downloadPDF(){
+//    const element = document.getElementById("sertifikat");
+//
+//    html2pdf(element, {
+//        margin: 0,
+//        filename: 'sertifikat.pdf',
+//        html2canvas: { scale: 2 },
+//        jsPDF: {
+//            unit: 'px',
+//            format: [1122, 794],
+//            orientation: 'landscape'
+//        }
+//    });
+//}
+
+// ===== VAR =====
+let angka1, angka2, angka3, hasil;
+let benar = 0;
+let soalKe = 0;
+let totalSoal = 10;
+let musikAktif = false;
+
+// ===== SUARA LUCU =====
+function ngomong(teksArray){
+    let teks = teksArray[Math.floor(Math.random()*teksArray.length)];
+    let u = new SpeechSynthesisUtterance(teks);
+    u.lang = "id-ID";
+    u.pitch = 1.8;
+    u.rate = 1.1;
+    speechSynthesis.speak(u);
+}
+
+// ===== SOUND EFFECT =====
+function bunyiKlik(){
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let o = ctx.createOscillator();
+    o.type = "square";
+    o.frequency.setValueAtTime(600, ctx.currentTime);
+    o.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.1);
+}
+
+function bunyiBenar(){
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.setValueAtTime(800, ctx.currentTime);
+    o.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.2);
+    o.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.2);
+}
+
+function bunyiSalah(){
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let o = ctx.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(200, ctx.currentTime);
+    o.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.3);
+}
+
+function bunyiSelesai(){
+    let ctx = new (window.AudioContext || window.webkitAudioContext)();
+    let o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(500, ctx.currentTime);
+    o.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 0.5);
+    o.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.5);
+}
+
+// ===== MUSIK =====
+function toggleMusik(){
+    let bgm = document.getElementById("bgm");
+
+    if(musikAktif){
+        bgm.pause();
+        musikAktif = false;
+    }else{
+        bgm.play();
+        musikAktif = true;
+    }
+}
+
+document.body.addEventListener("click", function(){
+    if(!musikAktif){
+        document.getElementById("bgm").play();
+        musikAktif = true;
+    }
+}, {once:true});
+
+// ===== SOAL =====
+function buatSoal(){
+    totalSoal = parseInt(document.getElementById("jumlahSoal").value);
+
+    angka1 = Math.floor(Math.random()*10)+1;
+    angka2 = Math.floor(Math.random()*10)+1;
+    hasil = angka1 * angka2;
+
+    soalKe++;
+
+    document.getElementById("soal").innerText = angka1+" x "+angka2+" = ?";
+    document.getElementById("soalKe").innerText = soalKe;
+    document.getElementById("jawaban").value = "";
+    document.getElementById("jawaban").focus();
+}
+
+// ===== CEK =====
+function cekJawaban(){
+    let jawab = document.getElementById("jawaban").value;
+
+    if(jawab == hasil){
+        benar++;
+
+        document.getElementById("notif").innerText = "? Benar";
+
+        bunyiBenar();
+        ngomong(["Yeaaay!","Hebat!","Keren!","Mantap!"]);
+
+    }else{
+        document.getElementById("notif").innerText = "? Salah ("+hasil+")";
+
+        bunyiSalah();
+        ngomong(["Yahh salah!","Coba lagi!","Semangat!"]);
+    }
+
+    document.getElementById("benar").innerText = benar;
+
+    if(soalKe >= totalSoal){
+        setTimeout(selesai,700);
+    }else{
+        setTimeout(buatSoal,500);
+    }
+}
+
+// ===== SELESAI =====
+function selesai(){
+
+    bunyiSelesai();
+    ngomong(["Horeee!","Kamu hebat!","Selamat!"]);
+	
+    let nama = document.getElementById("nama").value || "Peserta";
+    let nilai = Math.round((benar / totalSoal) * 100);
+
+    // kirim data lewat URL
+
+    window.location.href = 
+        "sertifikat.html?nama=" + encodeURIComponent(nama) +
+        "&nilai=" + nilai;
+
+}
+
+
+// ===== ENTER =====
+document.getElementById("jawaban").addEventListener("keydown", function(e){
+    if(e.key === "Enter") cekJawaban();
+});
+
+// ===== START =====
+buatSoal();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

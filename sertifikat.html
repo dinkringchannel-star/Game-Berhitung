@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#sertifikat {
+    position: relative;
+    width: 1122px;
+    height: 794px;
+    margin: auto;
+}
+
+/* background dari Canva */
+.bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('sertifikat-bg.png') no-repeat center;
+    background-size: cover;
+}
+
+/* layer teks */
+.layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* NAMA */
+.nama {
+    position: absolute; color:#333399;
+    top: 530px;
+	left:15px;
+    width: 100%;
+	text-align: Left;
+    font-size: 36px;
+    font-weight: bold; 
+	font-style: italic;
+}
+
+/* NILAI */
+.nilai {
+    position: absolute;
+    top: 585px;
+	left:125px;
+    width: 100%;
+    text-align: left;
+    font-size: 40px;
+    color: darkblue;
+}
+
+/* TANGGAL */
+.tanggal {
+    position: absolute;
+	left:15px;
+    bottom: 75px;
+    right: 120px;
+    font-size: 35px;
+	font-weight: bold; 
+	font-style: italic;
+}
+</style>
+</head>
+<button onclick="simpanPDF()">📄 Download PDF</button>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+<div id="sertifikat">
+    <div class="bg"></div>
+
+    <div class="layer">
+        <div id="nama" class="nama">NAMA PESERTA</div>
+        <div id="nilai" class="nilai">100</div>
+        <div id="tanggal" class="tanggal">Tanggal</div>
+    </div>
+</div> -->
+
+<script>
+//let nama = document.getElementById("nama").value;
+//let nilai = Math.round((benar / totalSoal) * 100);
+
+
+// ambil parameter dari URL
+const params = new URLSearchParams(window.location.search);
+
+const nama = params.get("nama") || "Peserta";
+const nilai = params.get("nilai") || "0";
+
+// masukkan ke tampilan
+document.getElementById("nama").innerText = nama;
+document.getElementById("nilai").innerText = nilai;
+
+// tanggal otomatis
+let today = new Date().toLocaleDateString("id-ID", {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+});
+document.getElementById("tanggal").innerText = today;
+
+
+function simpanPDF(){
+    const element = document.getElementById("sertifikat");
+
+    const nama = document.getElementById("nama").innerText || "Peserta";
+
+    const opt = {
+        margin: 0,
+        filename: nama + '-sertifikat.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: {
+            unit: 'px',
+            format: [1122, 794],
+            orientation: 'landscape'
+        }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+
+
+</script>
+window.onload = function(){
+    setTimeout(() => {
+        simpanPDF();
+    }, 800); // tunggu render
+}
+</body>
+</html>
